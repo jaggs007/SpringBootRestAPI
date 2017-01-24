@@ -1,63 +1,41 @@
 package student.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import student.domain.StudentDomain;
-import student.manager.StudentManager;
+import student.domain.Person;
+import student.repository.PersonRepository;
+import student.repository.PersonService;
 
 
 @RestController
-@RequestMapping(value="/api")
-public class StudentController{
+class PersonController {
+	
+	final PersonService personService;
 	
 	@Autowired
-    private StudentManager StudentManager;
-    
-	@RequestMapping(value="/std", method=RequestMethod.GET)
-	public StudentDomain getStudents(){
-		return new StudentDomain("540","Jagaran","VII","21");
+	PersonController( PersonService personService ){
+		this.personService = personService;
 	}
 	
-	@RequestMapping(value="/std/{id}", method=RequestMethod.GET)
-	public StudentDomain getStudent(){
-		return new StudentDomain("440","Single","VI","20");
-	}
+	@RequestMapping(value="/persons",method=RequestMethod.GET)
+	Page<Person> list( Pageable pageable){
+		Page<Person> persons = personService.listAllByPage(pageable);
+		return persons;
+	} 
 	
-	   @RequestMapping(value="/students", method= RequestMethod.POST)
-	    public StudentDomain addStudents(@RequestBody StudentDomain student)
-	    {
-	        return this.StudentManager.addStudent(student);
-	    }
-	    
-	    @RequestMapping(value="/students/{id}", method= RequestMethod.POST)
-	    public StudentDomain addStudent(@RequestBody StudentDomain student)
-	    {
-	        return this.StudentManager.addStudent(student);
-	    }
+	@RequestMapping(value="/addPersons",method=RequestMethod.POST)
+	PersonRepository addListt( 
+			@RequestParam(required = true, value = "userName") String userName ,
+			@RequestParam(required = true, value = "password") String password){
+		PersonRepository persons = personService.addList(userName ,password);
+		return persons;
+	} 
+}
 	
-	    
-	    @RequestMapping(value="/student/delete", method=RequestMethod.DELETE)
-	    public void removeStudents()
-	    {
-	         this.StudentManager.removeStudents();
-	    }
-	    
-	    @RequestMapping(value="/student/delete/{id}", method=RequestMethod.DELETE)
-	    public void removeStudent(@PathVariable String id)
-	    {
-	         this.StudentManager.removeStudent(id);
-	    }
-	    
-	    @RequestMapping(value="/student/update/{id}", method=RequestMethod.PUT)
-	    public StudentDomain updateStudent(@RequestBody StudentDomain student)
-	    {
-	        return this.StudentManager.updateStudent(student);
-	    }
-	}
-	
-	
+

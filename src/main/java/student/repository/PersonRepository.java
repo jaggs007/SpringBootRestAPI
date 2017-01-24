@@ -1,9 +1,9 @@
 package student.repository;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import student.domain.StudentDomain;
+import student.domain.Person;
 
-public interface StudentRepository extends MongoRepository< StudentDomain, String>{
+public interface PersonRepository extends PagingAndSortingRepository<Person,Integer> {
 
 }

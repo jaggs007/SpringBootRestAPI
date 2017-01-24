@@ -1,41 +1,43 @@
 package student.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
-import student.domain.StudentDomain;
-import student.manager.StudentManager;
-import student.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import student.domain.Person;
+import student.repository.PersonRepository;
+import student.repository.PersonService;
 
 @Service
-public class StudentService implements StudentManager{
-	
+@Transactional
+class PersonServiceImpl implements PersonService {
+
+	final PersonRepository personRepository;
+
 	@Autowired
-	private StudentRepository studentRepository;
-    
-	@Override
-	public StudentDomain addStudent(StudentDomain student){
-	//System.out.println("Adding student");
-	return this.studentRepository.save(student);
-}
-	
-	@Override
-	public void removeStudent(String student){
-	//System.out.println("Adding student");
-	studentRepository.delete(student);
-	
-}
-
-	@Override
-	public void removeStudents() {
-		// TODO Auto-generated method stub
-		studentRepository.deleteAll();
-		
+	PersonServiceImpl(PersonRepository personRepository) {
+		this.personRepository = personRepository;
 	}
 
 	@Override
-	public StudentDomain updateStudent(StudentDomain student) {
-		// TODO Auto-generated method stub
-		return this.studentRepository.save(student);
+	public Page<Person> listAllByPage(Pageable pageable) {
+		return personRepository.findAll(pageable);
 	}
+
+	@Override
+	public PersonRepository addList(String userName, String password) {
+		List<Person> p = new ArrayList<Person>();
+		for (int i = 0; i < 20; i++) {
+			Person person = new Person(userName + i++, password);
+			personRepository.save(person);
+			p.add(person);
+		}
+		return personRepository;
+	}
+
 }
